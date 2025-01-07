@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Conversion Tool</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f7f7;
+            color: #2d2d2d;
+            font-family: 'Poppins', sans-serif;
+            animation: backgroundFade 5s infinite alternate;
+        }
+
+        @keyframes backgroundFade {
+            0% { background-color: #e9ecef; }
+            100% { background-color: #f7f7f7; }
+        }
+
+        .container {
+            max-width: 1000px;
+            padding: 30px;
+            margin-top: 50px;
+            border-radius: 15px;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #007bff;
+            animation: pulse 1.2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { color: #007bff; }
+            100% { color: #34c759; }
+        }
+
+        .form-group label {
+            font-size: 1.5rem;
+            color: #007bff;
+            animation: bounceIn 1s ease-in-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .form-control {
+            height: 60px;
+            font-size: 1.3rem;
+            background-color: #eef2f7;
+            color: #495057;
+            border-radius: 5px;
+            border: 2px solid #ced4da;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #34c759;
+            box-shadow: 0 0 10px rgba(52, 199, 89, 0.5);
+        }
+
+        .output-container {
+            margin-top: 30px;
+            animation: slideUp 0.8s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .output img, .output audio, .output p {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            animation: fadeInScale 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .loader {
+            display: none;
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 70px;
+            height: 70px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .copy-btn, .download-btn {
+            margin-top: 10px;
+            animation: slideIn 1s ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateX(-20px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 1.2rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #34c759;
+            transform: translateY(-3px);
+        }
+
+        .btn-success, .btn-info {
+            font-size: 1.1rem;
+            animation: fadeInButton 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInButton {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-success:hover, .btn-info:hover {
+            background-color: #34c759;
+        }
+
+        .audio-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .audio-container audio {
+            margin-bottom: 10px;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .audio-container .btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">AI Conversion Tool</h1>
+    
+        <form id="conversionForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="conversion_type">Select Conversion Type</label>
+                <select id="conversion_type" class="form-control">
+                    <option value="text-to-text">Text to Text</option>
+                    <option value="text-to-image">Text to Image</option>
+                    <option value="text-to-audio">Text to Audio</option>
+                    <option value="text-to-speech">Text to Speech</option>
+                    <option value="audio-to-text">Audio to Text</option>
+                    <option value="image-to-text">Image to Text</option>
+                    <option value="image-to-image">Image to Image</option>
+                    <option value="text-to-code">Text to Code</option>
+                    <option value="text-to-math">Text to Math</option>
+                </select>
+            </div>
+    
+            <div class="form-group" id="textInputGroup">
+                <label for="input_text">Enter Input</label>
+                <textarea id="input_text" class="form-control" rows="5" placeholder="Enter your text here"></textarea>
+            </div>
+    
+            <div class="form-group d-none" id="fileInputGroup">
+                <label for="input_file_path">Enter File Path</label>
+                <input type="text" id="input_file_path" class="form-control" placeholder="Enter the file path">
+            </div>
+    
+            <button type="submit" class="btn btn-primary btn-block">Convert</button>
+        </form>
+    
+        <div class="loader" id="loader"></div>
+        <div id="output" class="output-container"></div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#conversion_type').on('change', function () {
+            const selectedType = $(this).val();
+    
+            if (['audio-to-text', 'image-to-text', 'image-to-image'].includes(selectedType)) {
+                $('#textInputGroup').addClass('d-none');
+                $('#fileInputGroup').removeClass('d-none');
+            } else {
+                $('#textInputGroup').removeClass('d-none');
+                $('#fileInputGroup').addClass('d-none');
+            }
+        });
+    
+        $('#conversionForm').on('submit', function (e) {
+            e.preventDefault();
+    
+            const conversionType = $('#conversion_type').val();
+            const formData = new FormData();
+    
+            formData.append('conversion_type', conversionType);
+    
+            if (['audio-to-text', 'image-to-text', 'image-to-image'].includes(conversionType)) {
+                const inputFilePath = $('#input_file_path').val();
+                if (inputFilePath) {
+                    formData.append('input_file_path', inputFilePath);
+                } else {
+                    alert('Please enter a valid file path.');
+                    return;
+                }
+            } else {
+                const inputText = $('#input_text').val();
+                formData.append('input_text', inputText);
+            }
+    
+            $('#loader').show(); 
+            $('#output').empty(); 
+    
+            $.ajax({
+                type: 'POST',
+                url: '/convert',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $('#loader').hide(); 
+    
+                    if (conversionType === 'text-to-image') {
+                        response.outputs.forEach(function (url) {
+                            const imgElement = `  
+                                <div class="output">
+                                    <img src="${url}" alt="Generated Image" class="img-fluid" />
+                                    <a href="${url}" download="generated_image.png" class="btn btn-success download-btn">Download Image</a>
+                                </div>`;
+                            $('#output').append(imgElement);
+                        });
+                    } else if (conversionType === 'text-to-text') {
+                        response.outputs.forEach(function (text) {
+                            const textElement = `
+                                <div class="output">
+                                    <p>${text}</p>
+                                    <button class="btn btn-info copy-btn" onclick="copyToClipboard('${text}')">Copy Text</button><br>
+                                </div>`;
+                            $('#output').append(textElement);
+                        });
+                    } else if (conversionType === 'text-to-speech') {
+                        response.outputs.forEach(function (output) {
+                            const audioElement = `
+                                <div class="audio-container">
+                                    <audio controls autoplay>
+                                        <source src="${output.audio_path}" type="audio/mpeg">
+                                        Your browser does not support the audio tag.
+                                    </audio>
+                                    <a href="${output.audio_path}" download="generated_audio.mp3" class="btn btn-success download-btn">Download Audio</a>
+                                </div>`;
+                            $('#output').append(audioElement);
+                        });
+                    } else if (conversionType === 'audio-to-text') {
+                        response.outputs.forEach(function (recognizedText) {
+                            const textElement = `
+                                <div class="output">
+                                    <p>Recognized Text:</p>
+                                    <pre>${recognizedText}</pre>
+                                    <button class="btn btn-info copy-btn" onclick="copyToClipboard(\${recognizedText}\)">Copy Text</button>
+                                </div>`;
+                            $('#output').append(textElement);
+                        });
+                    } else if (conversionType === 'text-to-code') {
+                        response.outputs.forEach(function (code) {
+                            const codeElement = `
+                                <div class="output">
+                                    <pre><code>${code}</code></pre>
+                                    <button class="btn btn-info copy-btn" onclick="copyToClipboard('${code}')">Copy Code</button>
+                                </div>`;
+                            $('#output').append(codeElement);
+                        });
+                    } else if (conversionType === 'text-to-math') {
+                        response.outputs.forEach(function (math) {
+                            const mathElement = `
+                                <div class="output">
+                                    <p>${math}</p>
+                                    <button class="btn btn-info copy-btn" onclick="copyToClipboard('${math}')">Copy Math</button>
+                                </div>`;
+                            $('#output').append(mathElement);
+                        });
+                    }
+                },
+                error: function () {
+                    $('#loader').hide();
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Text copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
